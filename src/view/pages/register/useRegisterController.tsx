@@ -22,8 +22,6 @@ export function useRegisterController() {
 		resolver: zodResolver(schema),
 	});
 
-	console.log(errors);
-
 	const { mutateAsync } = useRegister();
 	const navigate = useNavigate();
 
