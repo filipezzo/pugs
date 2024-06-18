@@ -5,11 +5,12 @@ interface InputLabelProps extends React.ComponentProps<"input"> {
 	label: string;
 	id: string;
 	type?: string;
+	error?: string;
 	className?: string;
 }
 
 export const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>(
-	({ label, id, type = "text", className, ...rest }, ref) => {
+	({ label, id, error, type = "text", className, ...rest }, ref) => {
 		return (
 			<div className="flex flex-col gap-2">
 				<label htmlFor={id}>{label}</label>
@@ -23,6 +24,7 @@ export const InputLabel = forwardRef<HTMLInputElement, InputLabelProps>(
 						className,
 					)}
 				/>
+				{error && <span className="text-sm text-rose-500">{error}</span>}
 			</div>
 		);
 	},

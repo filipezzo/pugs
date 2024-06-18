@@ -7,16 +7,22 @@ import { useRegister } from "../../../app/hooks/useRegister";
 
 const schema = z.object({
 	username: z.string().min(1, "Preencha um valor"),
-	email: z.string().email().min(1, "Preencha um valor"),
-	password: z.string().min(4, "No min 4 caracteres"),
+	email: z.string().email("Email inválido").min(1, "Preencha um valor"),
+	password: z.string().min(4, "Pelo menos 4 caracteres"),
 });
 
 type TypeSchema = z.infer<typeof schema>;
 
 export function useRegisterController() {
-	const { register, handleSubmit: handleFormSubmit } = useForm<TypeSchema>({
+	const {
+		register,
+		handleSubmit: handleFormSubmit,
+		formState: { errors },
+	} = useForm<TypeSchema>({
 		resolver: zodResolver(schema),
 	});
+
+	console.log(errors);
 
 	const { mutateAsync } = useRegister();
 	const navigate = useNavigate();
@@ -33,5 +39,6 @@ export function useRegisterController() {
 	return {
 		register,
 		handleSubmit,
+		errors,
 	};
 }
