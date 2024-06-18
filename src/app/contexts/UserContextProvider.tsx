@@ -1,11 +1,20 @@
-import { ReactNode, createContext, useCallback, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+	ReactNode,
+	createContext,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
+import toast from "react-hot-toast";
 import { localStorageKeys } from "../config/localStorageKeys";
+import useGetUser from "../hooks/useGetUser";
 import { IUser } from "../types/user";
 
 interface IUserContext {
 	user: IUser | null;
 	isLoggedIn: boolean;
-	hLogin(token: string, account: IUser): void;
+	hLogin(token: string): void;
 	hLogout(): void;
 }
 
@@ -23,29 +32,45 @@ export default function UserContextProvider({ children }: UserProvider) {
 
 		return !!hasTokenStoraged;
 	});
-	const [user, setUser] = useState<IUser | null>(() => {
-		const hasUserStoraged = localStorage.getItem(localStorageKeys.ACCESS_USER);
+	const queryClient = useQueryClient();
+	const { data, isSuccess, isError, isFetching } = useGetUser(isLoggedIn);
 
-		return hasUserStoraged ? JSON.parse(hasUserStoraged) : null;
-	});
-
-	const hLogin = useCallback((token: string, account: IUser) => {
+	const hLogin = useCallback((token: string) => {
 		localStorage.setItem(localStorageKeys.ACCESS_TOKEN, token);
-		localStorage.setItem(localStorageKeys.ACCESS_USER, JSON.stringify(account));
 		setIsLoggedIn(true);
-		setUser(account);
 	}, []);
 
 	const hLogout = useCallback(() => {
 		localStorage.removeItem(localStorageKeys.ACCESS_TOKEN);
 		localStorage.removeItem(localStorageKeys.ACCESS_USER);
-		setUser(null);
 		setIsLoggedIn(false);
+		queryClient.removeQueries({
+			queryKey: ["user", "me"],
+		});
 	}, []);
 
+	useEffect(() => {
+		if (isError) {
+			toast.error("Sua sessão expirou!");
+			hLogout();
+		}
+	}, [isError, hLogout]);
+
 	return (
-		<UserContext.Provider value={{ isLoggedIn, hLogin, hLogout, user }}>
-			{children}
+		<UserContext.Provider
+			value={{
+				isLoggedIn: isSuccess && isLoggedIn,
+				hLogin,
+				hLogout,
+				user: data,
+			}}
+		>
+			{isFetching && (
+				<div className="fixed left-0 top-0 grid h-full w-full place-items-center bg-zinc-900">
+					<div className="size-20 animate-spin rounded-full border-r-2 border-t-2 border-r-blue-500 border-t-blue-500" />
+				</div>
+			)}
+			{!isFetching && children}
 		</UserContext.Provider>
 	);
 }

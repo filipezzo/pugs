@@ -1,45 +1,13 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import { z } from "zod";
-import { useLogin } from "../../../app/hooks/useLogin";
-import { useUser } from "../../../app/hooks/useUser";
 import { Button } from "../../components/Button";
 import { InputLabel } from "../../components/InputLabel";
 import { Title } from "../../components/Title";
 import { LoginContainer } from "./components/LoginContainer";
-
-const schema = z.object({
-	username: z.string().min(1, "Preencha um valor"),
-	password: z.string().min(4, "Sua senha deve conter ao menos 4 caracteres"),
-});
-
-type TypeSchema = z.infer<typeof schema>;
+import { useLoginController } from "./useLoginController";
 
 export function Login() {
-	const {
-		register,
-		formState: { errors },
-		handleSubmit: handleLoginSubmit,
-	} = useForm<TypeSchema>({
-		resolver: zodResolver(schema),
-	});
-	const { mutateAsync } = useLogin();
-	const { hLogin } = useUser();
+	const { errors, handleSubmit, register } = useLoginController();
 
-	const handleSubmit = handleLoginSubmit(async (data: TypeSchema) => {
-		try {
-			const { token, ...user } = await mutateAsync(data);
-			if (token && user) {
-				hLogin(token, user);
-			} else {
-				throw new Error("Dados de autenticação inválidos");
-			}
-		} catch (error: any) {
-			toast.error(error.message || "Erro ao fazer o login");
-		}
-	});
 	return (
 		<LoginContainer>
 			<form onSubmit={handleSubmit} className="max-w-xl space-y-4">
@@ -63,7 +31,7 @@ export function Login() {
 				<Title style="underline">Cadastre-se</Title>
 				<p className="">Ainda não possui conta?</p>
 				<Button variant="secondary">
-					<Link className="flex-1" to="/registrar">
+					<Link className="flex-1" to="/login/registrar">
 						Cadastro
 					</Link>
 				</Button>

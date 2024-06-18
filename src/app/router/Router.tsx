@@ -14,9 +14,9 @@ export function Router() {
 				<Route element={<Layout />}>
 					<Route path="/" element={<Home />} />
 					<Route element={<AuthGuard isProtected={false} />}>
-						<Route element={<LoginLayout />}>
-							<Route path="/login" element={<Login />} />
-							<Route path="/registrar" element={<Register />} />
+						<Route path="/login/*" element={<LoginLayout />}>
+							<Route index element={<Login />} />
+							<Route path="registrar" element={<Register />} />
 						</Route>
 					</Route>
 

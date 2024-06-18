@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,9 @@ export function useRegisterController() {
 			navigate("/login");
 			toast.success("Conta criada com sucesso");
 		} catch (error: any) {
+			if (error instanceof AxiosError && error.response?.data.message) {
+				return toast.error(error.response?.data.message);
+			}
 			toast.error(error.message || "Ocorreu um erro ao criar a conta");
 		}
 	});

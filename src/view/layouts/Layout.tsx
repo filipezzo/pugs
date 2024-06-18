@@ -1,7 +1,15 @@
 import { PawPrint, User } from "lucide-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useUser } from "../../app/hooks/useUser";
 
 export function Layout() {
+	const { hLogout, user } = useUser();
+	const nav = useNavigate();
+
+	const handleClick = () => {
+		hLogout();
+		nav("/login");
+	};
 	return (
 		<div className="h-full bg-zinc-900 text-white antialiased">
 			<div className="relative h-full w-full">
@@ -10,13 +18,18 @@ export function Layout() {
 						<Link to="/">
 							<PawPrint />
 						</Link>
-						<Link
-							className="flex items-center gap-2 transition-colors hover:text-blue-500"
-							to="/login"
-						>
-							Login <User />
-						</Link>
+						{user ? (
+							<p>{user.nome}</p>
+						) : (
+							<Link
+								className="flex items-center gap-2 transition-colors hover:text-blue-500"
+								to="/login"
+							>
+								Login <User />
+							</Link>
+						)}
 					</nav>
+					<button onClick={handleClick}>click</button>
 				</header>
 				<Outlet />
 			</div>
