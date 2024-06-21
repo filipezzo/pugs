@@ -2,6 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "../../view/layouts/Layout";
 import { LoginLayout } from "../../view/layouts/LoginLayout";
 import { Dashboard } from "../../view/pages/dashboard/Dashboard";
+import { Account } from "../../view/pages/dashboard/account/Account";
+import { Post } from "../../view/pages/dashboard/post/Post";
 import { Home } from "../../view/pages/home/Home";
 import { Login } from "../../view/pages/login/Login";
 import { Register } from "../../view/pages/register/Register";
@@ -21,7 +23,10 @@ export function Router() {
 					</Route>
 
 					<Route element={<AuthGuard isProtected />}>
-						<Route path="/conta" element={<Dashboard />} />
+						<Route path="/conta/*" element={<Dashboard />}>
+							<Route index element={<Account />} />
+							<Route path="postar" element={<Post />} />
+						</Route>
 					</Route>
 				</Route>
 			</Routes>
