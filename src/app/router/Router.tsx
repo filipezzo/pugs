@@ -6,6 +6,7 @@ import { Account } from "../../view/pages/dashboard/account/Account";
 import { Post } from "../../view/pages/dashboard/post/Post";
 import { Home } from "../../view/pages/home/Home";
 import { Login } from "../../view/pages/login/Login";
+import PhotoDetails from "../../view/pages/photo/PhotoDetails";
 import { Register } from "../../view/pages/register/Register";
 import { AuthGuard } from "./AuthGuard";
 
@@ -23,6 +24,7 @@ export function Router() {
 					</Route>
 
 					<Route element={<AuthGuard isProtected />}>
+						<Route path="/foto/:id" element={<PhotoDetails />} />
 						<Route path="/conta/*" element={<Dashboard />}>
 							<Route index element={<Account />} />
 							<Route path="postar" element={<Post />} />

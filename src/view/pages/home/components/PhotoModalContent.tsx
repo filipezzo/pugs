@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { Dog, Eye } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { userService } from "../../../../app/services/users";
+import { Link } from "react-router-dom";
+import { usePhotoDetails } from "../../../../app/hooks/usePhotoDetails";
 import { Title } from "../../../components/Title";
 
 interface IPhotoModal {
@@ -12,10 +12,7 @@ interface IPhotoModal {
 export function PhotoModalContent({ id, closeModal }: IPhotoModal) {
 	const ref = useRef<HTMLDivElement>(null);
 
-	const { data, isFetching, isError, isSuccess } = useQuery({
-		queryKey: ["post", id],
-		queryFn: () => userService.photoMe(id),
-	});
+	const { data, isFetching, isError, isSuccess } = usePhotoDetails(id);
 
 	useEffect(() => {
 		const watchClick = (e: MouseEvent) => {
@@ -50,7 +47,10 @@ export function PhotoModalContent({ id, closeModal }: IPhotoModal) {
 							</span>
 						</header>
 						<div className="mt-10 flex flex-col gap-4">
-							<Title>{data.photo.title}</Title>
+							<Link to={`/foto/${id}`}>
+								<Title>{data.photo.title}</Title>
+							</Link>
+
 							<div>
 								<span className="mr-4 inline-block text-xl before:content-['|']">
 									{data.photo.peso}kg
