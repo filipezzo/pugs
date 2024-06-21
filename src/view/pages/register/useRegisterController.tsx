@@ -23,7 +23,7 @@ export function useRegisterController() {
 		resolver: zodResolver(schema),
 	});
 
-	const { mutateAsync } = useRegister();
+	const { mutateAsync, isPending } = useRegister();
 	const navigate = useNavigate();
 
 	const handleSubmit = handleFormSubmit(async (datax: TypeSchema) => {
@@ -42,5 +42,6 @@ export function useRegisterController() {
 		register,
 		handleSubmit,
 		errors,
+		isPending,
 	};
 }

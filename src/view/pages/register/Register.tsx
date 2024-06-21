@@ -1,11 +1,12 @@
 import { Button } from "../../components/Button";
 import { InputLabel } from "../../components/InputLabel";
+import { LoaderSpin } from "../../components/LoaderSpin";
 import { Title } from "../../components/Title";
 import { LoginContainer } from "../login/components/LoginContainer";
 import { useRegisterController } from "./useRegisterController";
 
 export function Register() {
-	const { register, handleSubmit, errors } = useRegisterController();
+	const { register, handleSubmit, errors, isPending } = useRegisterController();
 
 	return (
 		<LoginContainer>
@@ -32,7 +33,9 @@ export function Register() {
 					error={errors?.password?.message}
 					{...register("password")}
 				/>
-				<Button variant="primary">Cadastrar</Button>
+				<Button disabled={isPending} variant="primary">
+					{isPending ? <LoaderSpin /> : "Cadastrar"}
+				</Button>
 			</form>
 		</LoginContainer>
 	);
