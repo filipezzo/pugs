@@ -10,7 +10,7 @@ export function Dashboard() {
 	const size = useResize("(max-width: 600px)");
 
 	if (pathname === "/conta" || pathname.endsWith("/conta/")) {
-		title = "Minha conta";
+		title = "Meus Posts";
 	}
 
 	if (pathname === "/conta/postar") {

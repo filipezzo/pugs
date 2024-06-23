@@ -1,4 +1,5 @@
 import PhotoList from "../../components/PhotoList";
+import { SectionLoader } from "../../components/SectionLoader";
 import { PhotoModalContent } from "./components/PhotoModalContent";
 import { useHomeController } from "./useHomeController";
 
@@ -14,9 +15,8 @@ export function Home() {
 		closeModal,
 	} = useHomeController();
 
-	if (isLoading || isFetching)
-		return <p className="mt-20 text-4xl text-red-500">carregando</p>;
-	if (isError) return "errro";
+	if (isLoading || isFetching) return <SectionLoader />;
+	if (isError) return <p>algo deu errado</p>;
 
 	if (isSuccess) {
 		return (

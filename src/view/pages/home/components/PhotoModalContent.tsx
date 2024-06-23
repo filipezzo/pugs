@@ -1,8 +1,9 @@
 import { Dog, Eye } from "lucide-react";
-import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { usePhotoDetails } from "../../../../app/hooks/usePhotoDetails";
+import { useUser } from "../../../../app/hooks/useUser";
+import { SectionLoader } from "../../../components/SectionLoader";
 import { Title } from "../../../components/Title";
+import usePhotoModalController from "./usePhotoModalController";
 
 interface IPhotoModal {
 	id: number;
@@ -10,25 +11,24 @@ interface IPhotoModal {
 }
 
 export function PhotoModalContent({ id, closeModal }: IPhotoModal) {
-	const ref = useRef<HTMLDivElement>(null);
+	const {
+		data,
+		isFetching,
+		isError,
+		isSuccess,
+		ref,
+		comment,
+		setComment,
+		handleSubmit,
+		isPending,
+		ulRef,
+	} = usePhotoModalController(id, closeModal);
 
-	const { data, isFetching, isError, isSuccess } = usePhotoDetails(id);
+	const { user } = useUser();
 
-	useEffect(() => {
-		const watchClick = (e: MouseEvent) => {
-			if (ref.current && !ref.current.contains(e.target as Node)) {
-				closeModal();
-			}
-		};
-
-		window.addEventListener("mousedown", watchClick);
-		return () => {
-			window.removeEventListener("mousedown", watchClick);
-		};
-	}, [ref, closeModal]);
-
-	if (isFetching) <p>loading</p>;
-	if (isError) <p>error</p>;
+	if (isFetching) <SectionLoader />;
+	if (isError)
+		<p className="mt-40 text-3xl">Erro. tente novamente mais tarde</p>;
 
 	if (isSuccess) {
 		return (
@@ -37,8 +37,11 @@ export function PhotoModalContent({ id, closeModal }: IPhotoModal) {
 					ref={ref}
 					className="mx-auto flex w-full max-w-4xl flex-col overflow-hidden rounded-md bg-white md:flex-row"
 				>
-					<img className="max-h-[576px]" src={data.photo.src} />
-					<section className="flex w-full flex-col justify-between gap-4 p-5 text-black">
+					<div className="xl:h-[576px] xl:min-w-[576px]">
+						<img className="h-full w-full object-cover" src={data.photo.src} />
+					</div>
+
+					<section className="flex w-full flex-col gap-4 p-5 text-black">
 						<header className="flex items-center justify-between text-gray-500">
 							<span>@{data.photo.author}</span>
 							<span className="flex items-center gap-1">
@@ -60,24 +63,37 @@ export function PhotoModalContent({ id, closeModal }: IPhotoModal) {
 								</span>
 							</div>
 						</div>
-						<ul className="flex-1">
+						<ul ref={ulRef} className="max-h-[250px] overflow-y-scroll">
 							{data.comments &&
 								data.comments.map((comment: any) => (
-									<li className="flex gap-2" key={data.photo.id}>
+									<li
+										className="flex gap-2"
+										key={data.photo.id + Math.random()}
+									>
 										<strong>{comment.comment_author}: </strong>
 										<p className="flex-1">{comment.comment_content}</p>
 									</li>
 								))}
 						</ul>
-						<footer className="flex w-full items-end gap-2">
-							<textarea
-								placeholder="comente"
-								className="flex-1 resize-none rounded-md bg-gray-500 p-2"
-							/>
-							<button>
-								<Dog />
-							</button>
-						</footer>
+						{user && user?.username !== data.photo.author && (
+							<footer className="mt-auto flex w-full items-end gap-2">
+								<form
+									className="flex w-full items-end gap-2"
+									onSubmit={handleSubmit}
+								>
+									<textarea
+										value={comment}
+										disabled={isPending}
+										onChange={(e) => setComment(e.target.value)}
+										placeholder="comente"
+										className="flex-1 resize-none rounded-md bg-gray-500 p-2"
+									/>
+									<button type="submit">
+										<Dog className="hover:text-blue-500" />
+									</button>
+								</form>
+							</footer>
+						)}
 					</section>
 				</div>
 			</div>

@@ -1,3 +1,4 @@
+import { comment } from "./comment";
 import { feed } from "./feed";
 import { login } from "./login";
 import { me } from "./me";
@@ -12,4 +13,5 @@ export const userService = {
 	postDog,
 	feed,
 	photoMe,
+	comment,
 };

@@ -1,9 +1,10 @@
 import { Button } from "../../../components/Button";
 import { InputLabel } from "../../../components/InputLabel";
+import { LoaderSpin } from "../../../components/LoaderSpin";
 import { usePostController } from "./usePostController";
 
 export function Post() {
-	const { errors, handleChangeImg, img, register, submit } =
+	const { errors, handleChangeImg, img, register, submit, isPending } =
 		usePostController();
 
 	return (
@@ -30,11 +31,12 @@ export function Post() {
 
 				<input onChange={handleChangeImg} className="mb-2" type="file" />
 				<Button
+					disabled={isPending}
 					style={{ marginTop: "2rem" }}
 					className="mt-4"
 					variant="primary"
 				>
-					Enviar
+					{isPending ? <LoaderSpin /> : "Enviar"}
 				</Button>
 			</form>
 			{img.preview && (

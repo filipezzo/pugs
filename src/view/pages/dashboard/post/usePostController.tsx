@@ -40,7 +40,7 @@ export function usePostController() {
 		resolver: zodResolver(schema),
 	});
 
-	const { mutateAsync } = usePostDog();
+	const { mutateAsync, isPending } = usePostDog();
 
 	const submit = handleSubmit(async (data: TypeSchema) => {
 		const formData = new FormData();
@@ -66,5 +66,6 @@ export function usePostController() {
 		submit,
 		handleChangeImg,
 		img,
+		isPending,
 	};
 }
